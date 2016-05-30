@@ -1,0 +1,12 @@
+###
+# PostgreSQL VACUUM...
+#
+
+# vacuum lazy every night:  Mon-Sat
+45 3 * * 1-6 root nice -n 19 su - postgres -c "vacuumdb --all --full --analyze"
+
+# vacuum full vacuum on Sunday nigh
+45 3 * * 7 root nice -n 19 su - postgres -c "vacuumdb --all --analyze --quiet"
+
+# re-index all databases once a week
+01 17 * * 7 root nice -n 20 su - postgres -c "psql -t -c \"select datname from pg_database where datname not in ('template0') order by datname; \" | xargs -n 1 -I"{}" -- psql -U postgres {} -c \"REINDEX DATABASE  {}; \" "
