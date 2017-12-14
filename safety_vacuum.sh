@@ -12,7 +12,8 @@ fi
 tables=$(psql -U postgres $DB -t -c '\dt'|awk '{ print $3 }')
 
 for table in $tables; do 
-	#/usr/bin/vacuumdb -U postgres -f -z -d erp -t $table
+	echo "Vacuum full on $table..."
+	/usr/bin/vacuumdb -U postgres -f -z -d erp -t $table
 	echo "$table is done"
 	spacefree=$(df -h |grep pg_xlog|awk '{print $5}'|cut -d'%' -f1)
 	if [ "$spacefree" -gt "$limit" ]; then
